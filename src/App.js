@@ -29,6 +29,9 @@ const App = () => {
   try {
       const response = await axios.post('https://bully-backend.onrender.com/sendmail', data1);
       console.log('Email sent:', response);
+      setWork('');
+    setLocation('')
+    setMessage('')
   } catch (error) {
       console.error('Error sending email:', error);
   }
