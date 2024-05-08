@@ -25,6 +25,7 @@ const App = () => {
       room_no: location,
       message: message
     };
+    alert("Your message is sent to the savior. He will contact you soon. Thank you for using our service.")
 
     try {
       const response = await axios.post('https://bully-backend.onrender.com/sendmail', data1);
