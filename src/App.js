@@ -2,10 +2,13 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import backgroundImage from './oneImage.png';
 
+
 const App = () => {
   const [work, setWork] = useState('');
   const [location, setLocation] = useState('');
   const [message, setMessage] = useState('');
+  const [showModal, setShowModal] = useState(false);
+  const [showEmptyFieldModal, setShowEmptyFieldModal] = useState(false);
 
   const handleWorkChange = (event) => {
     setWork(event.target.value);
@@ -20,12 +23,16 @@ const App = () => {
   };
 
   const handleSend = async () => {
+    if (!work || !location) {
+      setShowEmptyFieldModal(true);
+      return;
+    }
+
     const data1 = {
       work: work,
       room_no: location,
       message: message
     };
-    alert("Your message is sent to the savior. He will contact you soon. Thank you for using our service.")
 
     try {
       const response = await axios.post('https://bully-backend.onrender.com/sendmail', data1);
@@ -33,12 +40,19 @@ const App = () => {
       setWork('');
       setLocation('');
       setMessage('');
+      setShowModal(true);
     } catch (error) {
       console.error('Error sending email:', error);
       setWork('');
       setLocation('');
       setMessage('');
+      setShowModal(true);
     }
+  };
+
+  const closeModal = () => {
+    setShowModal(false);
+    setShowEmptyFieldModal(false);
   };
 
   return (
@@ -65,6 +79,46 @@ const App = () => {
         </div>
         <button style={{ padding: '10px 20px', fontSize: '16px', backgroundColor: '#007bff', color: '#fff', border: 'none', borderRadius: '5px', cursor: 'pointer', width: '100%' }} onClick={handleSend}>Send</button>
       </div>
+
+      {/* Bootstrap Modal for Empty Field */}
+      {showEmptyFieldModal && (
+        <div className="modal" tabIndex="-1" role="dialog" style={{ display: 'block', backgroundColor: 'rgba(0, 0, 0, 0.5)', overflow: 'auto' }}>
+          <div className="modal-dialog" role="document">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title">Error</h5>
+                <button type="button" className="close" aria-label="Close" onClick={closeModal}>
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div className="modal-body">
+                The saviour is dumb. He couldn't find your location or task. Please fill in the required fields.
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+      {/* End of Bootstrap Modal for Empty Field */}
+
+      {/* Bootstrap Modal for Message Sent */}
+      {showModal && (
+        <div className="modal" tabIndex="-1" role="dialog" style={{ display: 'block', backgroundColor: 'rgba(0, 0, 0, 0.5)', overflow: 'auto' }}>
+          <div className="modal-dialog" role="document">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title">Message Sent</h5>
+                <button type="button" className="close" aria-label="Close" onClick={closeModal}>
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div className="modal-body">
+                Your message is sent to the savior. He will contact you soon. Thank you for using our service.
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+      {/* End of Bootstrap Modal for Message Sent */}
     </div>
   );
 };
